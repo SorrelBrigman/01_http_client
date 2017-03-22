@@ -9,26 +9,28 @@ const tickerSymbol = process.argv[2];
 
 
 let params = {
-  Normalized : true,
-  // StartDate: '',
-  // EndDate: '',
-  DataPeriod: 'Year',
-  Elements: [
-    {Symbol:tickerSymbol}
+  'Normalized' : false,
+  'NumberOfDays': 365,
+  'DataPeriod': 'Day',
+  'Elements': [
+    {'Symbol': tickerSymbol,
+    'Type': 'price',
+    'Params': ['c']}
   ]
 }
 
 let stringParams = JSON.stringify(params);
-
-get(`http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp?parameters=${stringParams}`, (res)=>{
+console.log(stringParams)
+get(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=${stringParams}`, (res)=>{
   const statusCode = res.statusCode;
 
   let error;
   if(statusCode !== 200) {
     error = new Error(`Request Failed.\n Status Code: ${statusCode}`)
-  } else if (!/^application\/json/.test(contentType)){
-    error = new Error(`Invalid content-type.\n Expected application/json but received ${contentType}`)
-  }
+   }
+  //else if (!/^application\/json/.test(contentType)){
+  //   error = new Error(`Invalid content-type.\n Expected application/json but received ${contentType}`)
+  // }
 
   if (error) {
     console.log(error.message);
@@ -42,6 +44,11 @@ get(`http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp?parameters=${st
   });
   res.on('end', ()=>{
     console.log(JSON.parse(body));
+    let response = JSON.parse(body);
+    console.log("response", response);
+    let prices = response.Elements[0].DataSeries.close.values;
+    console.log("prices", prices);
+
   }).on('error', (e)=>{
     console.log('Got error message: ', e.message);
   })
