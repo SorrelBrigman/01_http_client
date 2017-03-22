@@ -23,7 +23,7 @@ let stringParams = JSON.stringify(params);
 // console.log(stringParams)
 get(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=${stringParams}`, (res)=>{
   const statusCode = res.statusCode;
-
+  // console.log("response object", res);
   let error;
   if(statusCode !== 200) {
     error = new Error(`Request Failed.\n Status Code: ${statusCode}`)
@@ -43,16 +43,16 @@ get(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?paramete
     body += buff.toString();
   });
   res.on('end', ()=>{
-
-    let response = JSON.parse(body);
-
     //I need to nail down the response to get the prices
     //the response has a key called "Elements" which holds an array
     //inside the first item of the array is a key called "DataSeries" (which itself is an object)
     //inside the "DataSeries" object is a key called "close", and inside of the key called "close"
     //there is the key called "values" which holds all the prices.
-    let pricesArray = response.Elements[0].DataSeries.close.values;
+    // let pricesArray = response.Elements[0].DataSeries.close.values;
+    //using ES6 restructuring to get to the array of daily price closing
+    let {Elements : [{DataSeries: {close :{values}}}]} = JSON.parse(body);
 
+    let pricesArray = values;
 
     let averageStockPrice = (arr)=>{
       let sum = 0;
