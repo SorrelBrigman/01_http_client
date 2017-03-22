@@ -20,7 +20,7 @@ let params = {
 }
 
 let stringParams = JSON.stringify(params);
-console.log(stringParams)
+// console.log(stringParams)
 get(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=${stringParams}`, (res)=>{
   const statusCode = res.statusCode;
 
@@ -43,27 +43,27 @@ get(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?paramete
     body += buff.toString();
   });
   res.on('end', ()=>{
-    console.log(JSON.parse(body));
+
     let response = JSON.parse(body);
-    console.log("response", response);
+
     //I need to nail down the response to get the prices
     //the response has a key called "Elements" which holds an array
     //inside the first item of the array is a key called "DataSeries" (which itself is an object)
     //inside the "DataSeries" object is a key called "close", and inside of the key called "close"
     //there is the key called "values" which holds all the prices.
     let pricesArray = response.Elements[0].DataSeries.close.values;
-    console.log("prices", pricesArray);
 
-    let averageStockPrice = ()=>{
+
+    let averageStockPrice = (arr)=>{
       let sum = 0;
-      for (let i = 0; i < pricesArray.length; i++){
-        sum += pricesArray[i];
+      for (let i = 0; i < arr.length; i++){
+        sum += arr[i];
       }
-      return (sum/365)
+      return (sum/(arr.length + 1)).toFixed(2)
     }
-    let result = averageStockPrice().toFixed(2);
+    let result = averageStockPrice(pricesArray);
 
-    console.log("average $", result);
+    console.log("$",result);
 
   }).on('error', (e)=>{
     console.log('Got error message: ', e.message);
