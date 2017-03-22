@@ -93,7 +93,9 @@ let stringParams = JSON.stringify(params);
 // const getJSON = (url, cb) => { ... }
 // getJSON('http://example.com', data => { ... })
 
-const getJSON = (url, cb) => {
+const getJSON = (url) => {
+  return new Promise((resolve, reject)=>{
+
   get(url, (res)=>{
     const statusCode = res.statusCode;
 //   const contentType = res.headers['content-type'];
@@ -117,7 +119,8 @@ const getJSON = (url, cb) => {
       body += buff.toString();
     });
     res.on('end', ()=>{
-      cb(body);
+      resolve(body);
+    })
   })
  })
 }
@@ -143,7 +146,10 @@ const findAverage = (data)=>{
 
 }
 
-getJSON(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=${stringParams}`, findAverage)
+getJSON(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=${stringParams}`)
+.then((res)=>{
+  findAverage(res)
+})
 
 
 // Promisify the getJSON function:
