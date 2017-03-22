@@ -10,9 +10,9 @@ const tickerSymbol = process.argv[2];
 
 let params = {
   Normalized : true,
-  // StartDate: "",
-  // EndDate: "",
-  DataPeriod: "Year",
+  // StartDate: '',
+  // EndDate: '',
+  DataPeriod: 'Year',
   Elements: [
     {Symbol:tickerSymbol}
   ]
@@ -21,7 +21,28 @@ let params = {
 let stringParams = JSON.stringify(params);
 
 get(`http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp?parameters=${stringParams}`, (res)=>{
-  console.log(res);
+  const statusCode = res.statusCode;
+
+  let error;
+  if(statusCode !== 200) {
+    error = new Error(`Request Failed.\n Status Code: ${statusCode}`)
+  } else if (!/^application\/json/.test(contentType)){
+    error = new Error(`Invalid content-type.\n Expected application/json but received ${contentType}`)
+  }
+
+  if (error) {
+    console.log(error.message);
+    res.resume();
+    return;
+  }
+
+  let body = '';
+  res.on('data', (buff)=>{
+    body += buff.toString();
+  });
+  res.on('end', ()=>{
+    console.log(JSON.parse(body));
+  })
 })
 //Use the get method in the http module with the API provided by MarkitOnDemand.
 //markitDemand query http://dev.markitondemand.com/Api/v2/InteractiveChart?dataperiod=year&element=[symbol=${tickerSymbol},"price":["ohlc"]]
