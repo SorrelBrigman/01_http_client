@@ -46,8 +46,24 @@ get(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?paramete
     console.log(JSON.parse(body));
     let response = JSON.parse(body);
     console.log("response", response);
-    let prices = response.Elements[0].DataSeries.close.values;
-    console.log("prices", prices);
+    //I need to nail down the response to get the prices
+    //the response has a key called "Elements" which holds an array
+    //inside the first item of the array is a key called "DataSeries" (which itself is an object)
+    //inside the "DataSeries" object is a key called "close", and inside of the key called "close"
+    //there is the key called "values" which holds all the prices.
+    let pricesArray = response.Elements[0].DataSeries.close.values;
+    console.log("prices", pricesArray);
+
+    let averageStockPrice = ()=>{
+      let sum = 0;
+      for (let i = 0; i < pricesArray.length; i++){
+        sum += pricesArray[i];
+      }
+      return (sum/365)
+    }
+    let result = averageStockPrice().toFixed(2);
+
+    console.log("average $", result);
 
   }).on('error', (e)=>{
     console.log('Got error message: ', e.message);
