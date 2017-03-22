@@ -42,6 +42,8 @@ get(`http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp?parameters=${st
   });
   res.on('end', ()=>{
     console.log(JSON.parse(body));
+  }).on('error', (e)=>{
+    console.log('Got error message: ', e.message);
   })
 })
 //Use the get method in the http module with the API provided by MarkitOnDemand.
