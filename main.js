@@ -6,23 +6,12 @@ const {getJSON} = require('./getStocks.js');
 const {findAverage} = require('./findAverage');
 const {getSymbol} = require('./parseArgs');
 
-// let tickerSymbol = process.argv[2];
-
-// let params = {
-//   'Normalized' : false,
-//   'NumberOfDays': 365,
-//   'DataPeriod': 'Day',
-//   'Elements': [
-//     {'Symbol': tickerSymbol,
-//     'Type': 'price',
-//     'Params': ['c']}
-//   ]
-// }
-
-// let stringParams = JSON.stringify(params);
+//get the user supplied stock symbol
 let stringParams = getSymbol();
-
+//call the function that gets 365 days worth of closing prices for that stock
 getJSON(`http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=${stringParams}`)
+//then find the average closing price of that stock
 .then((res)=>{
-  findAverage(res)
+  let result = findAverage(res);
+  console.log(result);
 })

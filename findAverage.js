@@ -15,7 +15,8 @@ module.exports.findAverage = (data)=>{
     }
     let result = `$${averageStockPrice(pricesArray)}`;
 
-    console.log(result);
+    //return the average price
+    return result;
 
 
 }
