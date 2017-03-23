@@ -18,7 +18,7 @@ module.exports.getJSON = (url) => {
           error = new Error(`Request Failed.\n Status Code: ${statusCode}`)
          }
         else if (!/^text\/javascript/.test(contentType)){
-          error = new Error(`Invalid content-type.\n Expected application/json but received ${contentType}`)
+          error = new Error(`Invalid content-type.\n Expected text/javascript but received ${contentType}`)
         }
 
         if (error) {
